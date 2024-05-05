@@ -24,7 +24,7 @@ steps:
 
   lint-editorconfig:
     depends_on: []
-    image: docker.io/mstruebing/editorconfig-checker:2.7.2
+    image: docker.io/mstruebing/editorconfig-checker:v3.0.1
     when:
       event: pull_request
 

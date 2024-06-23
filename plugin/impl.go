@@ -139,7 +139,7 @@ func (p *Plugin) InitSettings() error {
 
 	if len(p.settings.Logins) == 0 {
 		p.settings.Logins = []Login{p.settings.DefaultLogin}
-	} else if !p.settings.DefaultLogin.anonymous() {
+	} else if !p.settings.DefaultLogin.anonymous() || len(p.settings.DefaultLogin.Mirrors) > 0 {
 		p.settings.Logins = prepend(p.settings.Logins, p.settings.DefaultLogin)
 	}
 
@@ -158,10 +158,10 @@ func (p *Plugin) Validate() error {
 		return fmt.Errorf("'%s' is not a valid, single tag", p.settings.Build.TagsDefaultName)
 	}
 
-	// beside the default login all other logins need to set a username and password
+	// beside the default login all other logins need to set either a username and password or custom mirrors
 	for _, l := range p.settings.Logins[1:] {
-		if l.anonymous() {
-			return fmt.Errorf("beside the default login all other logins need to set a username and password")
+		if l.anonymous() && len(l.Mirrors) == 0 {
+			return fmt.Errorf("beside the default login all other logins need to set either a username and password or custom mirrors")
 		}
 	}
 

@@ -217,6 +217,9 @@ func commandDaemon(daemon Daemon) *exec.Cmd {
 	if daemon.Insecure && daemon.Registry != "" {
 		args = append(args, "--insecure-registry", daemon.Registry)
 	}
+	if daemon.Registry != "" && daemon.Mirror != "" {
+		args = append(args, "--registry-mirror", daemon.Mirror)
+	}
 	if daemon.IPv6 {
 		args = append(args, "--ipv6")
 	}

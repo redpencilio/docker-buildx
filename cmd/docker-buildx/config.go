@@ -94,6 +94,12 @@ func settingsFlags(settings *plugin.Settings) []cli.Flag {
 			Destination: &settings.Daemon.Disabled,
 		},
 		&cli.StringFlag{
+			Name:        "daemon.ssh-key",
+			Sources:     cli.EnvVars("PLUGIN_SSH_KEY", "SSH_KEY"),
+			Usage:       "adds a ssh key to be used by the daemon",
+			Destination: &settings.Daemon.SshKey,
+		},
+		&cli.StringFlag{
 			Name:        "daemon.buildkit-config",
 			Sources:     cli.EnvVars("PLUGIN_BUILDKIT_CONFIG"),
 			Usage:       "sets content of the docker buildkit json config",

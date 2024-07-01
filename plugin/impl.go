@@ -34,6 +34,7 @@ type Daemon struct {
 	BuildkitConfig    string   // Docker buildkit config
 	BuildkitDriverOpt []string // Docker buildkit driveropt args
 	BuildkitDebug     bool     // Docker buildkit debug setting
+	SshKey            string   // Docker daemon SSH key
 }
 
 // Login defines Docker login parameters.
@@ -393,6 +394,23 @@ func (p *Plugin) Execute() error {
 
 	// add proxy build args
 	addProxyBuildArgs(&p.settings.Build)
+
+	// add optional SSH key
+	if p.settings.Daemon.SshKey != "" {
+		if err := os.MkdirAll("/root/.ssh", 0o700); err != nil {
+			return fmt.Errorf("error creating /root/.ssh dir: %s", err)
+		}
+		// make sure the key ends with a newline
+		if !strings.HasSuffix(p.settings.Daemon.SshKey, "\n") {
+			p.settings.Daemon.SshKey = strings.Join(
+				append(strings.Split(p.settings.Daemon.SshKey, "\n"), "\n"),
+				"\n",
+			)
+		}
+		if err := os.WriteFile("/root/.ssh/id_rsa", []byte(p.settings.Daemon.SshKey), 0o600); err != nil {
+			return fmt.Errorf("error writing SSH key: %s", err)
+		}
+	}
 
 	var cmds []*exec.Cmd
 	cmds = append(cmds, commandVersion()) // docker version

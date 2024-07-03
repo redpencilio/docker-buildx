@@ -35,6 +35,7 @@ type Daemon struct {
 	BuildkitDriverOpt []string // Docker buildkit driveropt args
 	BuildkitDebug     bool     // Docker buildkit debug setting
 	SshKey            string   // Docker daemon SSH key
+	RemoteBuilders    []string // Remote builders for buildx to use
 }
 
 // Login defines Docker login parameters.

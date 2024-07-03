@@ -99,6 +99,12 @@ func settingsFlags(settings *plugin.Settings) []cli.Flag {
 			Usage:       "adds a ssh key to be used by the daemon",
 			Destination: &settings.Daemon.SshKey,
 		},
+		&cli.StringSliceFlag{
+			Name:        "daemon.remote-builder",
+			Sources:     cli.EnvVars("PLUGIN_REMOTE_BUILDERS", "REMOTE_BUILDERS"),
+			Usage:       "adds remote builders to be used by buildx",
+			Destination: &settings.Daemon.RemoteBuilders,
+		},
 		&cli.StringFlag{
 			Name:        "daemon.buildkit-config",
 			Sources:     cli.EnvVars("PLUGIN_BUILDKIT_CONFIG"),

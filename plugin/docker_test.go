@@ -62,7 +62,7 @@ func TestCommandBuilder(t *testing.T) {
 			_ = app.Run(context.Background(), nil)
 
 			// call the commandBuilder to prepare the cmd with its args
-			_ = commandBuilder(test.Daemon)
+			_ = commandBuilder(test.Daemon, "", false)
 
 			assert.Len(t, test.Daemon.BuildkitDriverOpt, test.WantedLen)
 		})

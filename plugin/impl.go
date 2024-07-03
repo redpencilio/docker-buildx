@@ -416,7 +416,17 @@ func (p *Plugin) Execute() error {
 	var cmds []*exec.Cmd
 	cmds = append(cmds, commandVersion()) // docker version
 	cmds = append(cmds, commandInfo())    // docker info
-	cmds = append(cmds, commandBuilder(p.settings.Daemon))
+	if len(p.settings.Daemon.RemoteBuilders) == 0 { // no remote builder, create a local one
+		cmds = append(cmds, commandBuilder(p.settings.Daemon, "", false))
+	} else {
+		append_builder := false // don't append for the first builder
+		for i, host := range p.settings.Daemon.RemoteBuilders {
+			name := fmt.Sprintf("builder_%d", i)
+			cmds = append(cmds, commandContext(name, host))
+			cmds = append(cmds, commandBuilder(p.settings.Daemon, name, append_builder))
+			append_builder = true // to add subsequent builders we need to append
+		}
+	}
 	cmds = append(cmds, commandBuildx())
 	cmds = append(cmds, commandBuild(p.settings.Build, p.settings.Dryrun)) // docker build
 	if !p.settings.Dryrun && p.settings.Build.Output != "" &&

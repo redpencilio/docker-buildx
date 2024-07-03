@@ -20,6 +20,7 @@ This plugin is a fork of [thegeeklab/drone-docker-buildx](https://github.com/the
 - Use custom registries
 - Build based on existing tags when needed
 - Push to multiple registries/repos
+- Use remote builders
 
 It will automatically generate buildkit configuration to use custom CA certificate if following conditions are met:
 
@@ -47,6 +48,8 @@ To mount custom CA certificates, the Woodpecker env var `WOODPECKER_BACKEND_DOCK
 | `tag`/`tags`            | _none_                        | sets repository tags to use for the image          |
 | `platforms`             | _none_                        | sets target platform for build                     |
 | `provenance`            | _none_                        | sets provenance for build                          |
+| `remote-builders`       | _none_                        | sets remote builders for build                     |
+| `ssh-key`               | _none_                        | sets an ssh key to connect to remote builders      |
 
 ## auto_tag
 
@@ -91,6 +94,30 @@ docker-build:
     registry: codeberg.org
     dry-run: true
     output: type=oci,dest=${CI_REPO_OWNER}-hello.tar
+```
+
+```yaml
+multiple-platforms-and-remotes:
+  image: woodpeckerci/plugin-docker-buildx
+  settings:
+    platforms: linux/amd64,linux/arm64
+    repo: codeberg.org/${CI_REPO_OWNER}/hello
+    registry: codeberg.org
+    dry-run: true
+    ssh-key:
+      from_secret: ssh_key
+    remote-builders: root@my-amd64-build-server,root@my-arm64-build-server
+```
+
+```yaml
+same-using-secrets:
+  image: woodpeckerci/plugin-docker-buildx
+  settings:
+    platforms: linux/amd64,linux/arm64
+    repo: codeberg.org/${CI_REPO_OWNER}/hello
+    registry: codeberg.org
+    dry-run: true
+  secrets: [ssh_key, remote_builders]
 ```
 
 ## Advanced Settings

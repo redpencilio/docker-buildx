@@ -335,6 +335,33 @@ func (p *Plugin) writeBuildkitConfig() error {
 	return nil
 }
 
+// Lookup Host keys and add them to known_hosts if new
+func addToKnownHosts(host string) error {
+	// make sure we only use a host
+	host_slice := strings.Split(host, "@")
+	host = host_slice[len(host_slice)-1]
+
+	if err := os.MkdirAll("/root/.ssh", 0o700); err != nil {
+		return fmt.Errorf("error creating /root/.ssh dir: %s", err)
+	}
+
+	khFile, err := os.OpenFile("/root/.ssh/known_hosts", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
+	if err != nil {
+		return fmt.Errorf("error opening known_hosts file: %s", err)
+	}
+	defer khFile.Close()
+
+	cmd := exec.Command("/usr/bin/ssh-keyscan", host)
+	cmd.Stdout = khFile
+	cmd.Stderr = os.Stderr
+	trace(cmd)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("error writing known_hosts file: %s", err)
+	}
+
+	return nil
+}
+
 // Execute provides the implementation of the plugin.
 func (p *Plugin) Execute() error {
 	// start the Docker daemon server
@@ -421,6 +448,9 @@ func (p *Plugin) Execute() error {
 	} else {
 		append_builder := false // don't append for the first builder
 		for i, host := range p.settings.Daemon.RemoteBuilders {
+			if err := addToKnownHosts(host); err != nil {
+				return err
+			}
 			name := fmt.Sprintf("builder_%d", i)
 			cmds = append(cmds, commandContext(name, host))
 			cmds = append(cmds, commandBuilder(p.settings.Daemon, name, append_builder))

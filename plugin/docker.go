@@ -31,28 +31,18 @@ func commandInfo() *exec.Cmd {
 	return exec.Command(dockerExe, "info")
 }
 
-// helper function to create the docker context create command.
-// a docker context is needed for a remote builder.
-func commandContext(name, host string) *exec.Cmd {
-	args := []string{
-		"context",
-		"create",
-		name,
-		"--docker",
-		"host=ssh://" + host,
-	}
-
-	return exec.Command(dockerExe, args...)
-}
-
-func commandBuilder(daemon Daemon, context string, append_builder bool) *exec.Cmd {
+func commandBuilder(daemon Daemon, host string, append_builder bool) *exec.Cmd {
 	args := []string{
 		"buildx",
 		"create",
 		"--name",
 		"builder",
 		"--use",
-		context, // if context is empty the builder will just use a local context
+	}
+
+	if host != "" {
+		args = append(args, "--driver=docker-container")
+		args = append(args, "ssh://" + host)
 	}
 
 	if append_builder {

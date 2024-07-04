@@ -447,13 +447,11 @@ func (p *Plugin) Execute() error {
 		cmds = append(cmds, commandBuilder(p.settings.Daemon, "", false))
 	} else {
 		append_builder := false // don't append for the first builder
-		for i, host := range p.settings.Daemon.RemoteBuilders {
+		for _, host := range p.settings.Daemon.RemoteBuilders {
 			if err := addToKnownHosts(host); err != nil {
 				return err
 			}
-			name := fmt.Sprintf("builder_%d", i)
-			cmds = append(cmds, commandContext(name, host))
-			cmds = append(cmds, commandBuilder(p.settings.Daemon, name, append_builder))
+			cmds = append(cmds, commandBuilder(p.settings.Daemon, host, append_builder))
 			append_builder = true // to add subsequent builders we need to append
 		}
 	}

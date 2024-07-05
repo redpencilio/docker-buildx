@@ -96,30 +96,6 @@ docker-build:
     output: type=oci,dest=${CI_REPO_OWNER}-hello.tar
 ```
 
-```yaml
-multiple-platforms-and-remotes:
-  image: woodpeckerci/plugin-docker-buildx
-  settings:
-    platforms: linux/amd64,linux/arm64
-    repo: codeberg.org/${CI_REPO_OWNER}/hello
-    registry: codeberg.org
-    dry-run: true
-    ssh-key:
-      from_secret: ssh_key
-    remote-builders: root@my-amd64-build-server,root@my-arm64-build-server
-```
-
-```yaml
-same-using-secrets:
-  image: woodpeckerci/plugin-docker-buildx
-  settings:
-    platforms: linux/amd64,linux/arm64
-    repo: codeberg.org/${CI_REPO_OWNER}/hello
-    registry: codeberg.org
-    dry-run: true
-  secrets: [ssh_key, remote_builders]
-```
-
 ## Advanced Settings
 
 | Settings Name                      | Default           | Description                                                                                                                                          |
@@ -277,4 +253,51 @@ steps:
       repo: hari/radiant
       cache_to: type=s3,region=east,bucket=mystuff,name=radiant-cache
       cache_from: type=s3,region=east,bucket=mystuff,name=radiant-cache
+```
+
+## Using remote builders
+
+When building for multiple platforms, you might want to offload some builds to a remote server, to avoid emulation.
+To support this, provide a list build servers to `remote-builders`.
+These servers will need key authentication, so you will also need to provide a (private) SSH key.
+
+```yaml
+build:
+  image: woodpeckerci/plugin-docker-buildx
+  settings:
+    platforms: linux/amd64,linux/arm64
+    repo: codeberg.org/${CI_REPO_OWNER}/hello
+    registry: codeberg.org
+    dry-run: true
+    ssh-key:
+      from_secret: ssh_key
+    remote-builders: root@my-amd64-build-server,root@my-arm64-build-server
+```
+
+The remote servers list can also be set using secrets:
+
+```yaml
+build:
+  image: woodpeckerci/plugin-docker-buildx
+  settings:
+    platforms: linux/amd64,linux/arm64
+    repo: codeberg.org/${CI_REPO_OWNER}/hello
+    registry: codeberg.org
+    dry-run: true
+  secrets: [ssh_key, remote_builders]
+```
+
+If you want to mix local and remote builders, the list can include "local":
+
+```yaml
+build:
+  image: woodpeckerci/plugin-docker-buildx
+  settings:
+    platforms: linux/amd64,linux/arm64
+    repo: codeberg.org/${CI_REPO_OWNER}/hello
+    registry: codeberg.org
+    dry-run: true
+    ssh-key:
+      from_secret: ssh_key
+    remote-builders: local,root@my-arm64-build-server
 ```

@@ -40,9 +40,9 @@ func commandBuilder(daemon Daemon, host string, append_builder bool) *exec.Cmd {
 		"--use",
 	}
 
-	if host != "" {
+	if host != "" && host != "local" {
 		args = append(args, "--driver=docker-container")
-		args = append(args, "ssh://" + host)
+		args = append(args, "ssh://"+host)
 	}
 
 	if append_builder {

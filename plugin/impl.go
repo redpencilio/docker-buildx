@@ -337,6 +337,9 @@ func (p *Plugin) writeBuildkitConfig() error {
 
 // Lookup Host keys and add them to known_hosts if new
 func addToKnownHosts(host string) error {
+	if host == "local" {
+		return nil
+	}
 	// make sure we only use a host
 	host_slice := strings.Split(host, "@")
 	host = host_slice[len(host_slice)-1]
@@ -441,10 +444,10 @@ func (p *Plugin) Execute() error {
 	}
 
 	var cmds []*exec.Cmd
-	cmds = append(cmds, commandVersion()) // docker version
-	cmds = append(cmds, commandInfo())    // docker info
+	cmds = append(cmds, commandVersion())           // docker version
+	cmds = append(cmds, commandInfo())              // docker info
 	if len(p.settings.Daemon.RemoteBuilders) == 0 { // no remote builder, create a local one
-		cmds = append(cmds, commandBuilder(p.settings.Daemon, "", false))
+		cmds = append(cmds, commandBuilder(p.settings.Daemon, "local", false))
 	} else {
 		append_builder := false // don't append for the first builder
 		for _, host := range p.settings.Daemon.RemoteBuilders {

@@ -1,0 +1,12 @@
+pipeline:
+  build-and-push:
+    image: woodpeckerci/plugin-docker-buildx
+    secrets: [ docker_username, docker_password ]
+    settings:
+      repo: ${CI_REPO_OWNER/redpencilio/redpencil}/plugin-${CI_REPO_NAME}
+      tags: ${CI_COMMIT_BRANCH/\//-}
+      platforms: linux/amd64,linux/arm64
+when:
+  event:
+    - push
+  branch: add-remote-builders

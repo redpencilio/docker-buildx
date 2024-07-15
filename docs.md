@@ -140,6 +140,9 @@ docker-build:
 | `ecr_lifecycle_policy`             | _none_            | AWS ECR lifecycle policy                                                                                                                             |
 | `ecr_repository_policy`            | _none_            | AWS ECR repository policy                                                                                                                            |
 | `ecr_scan_on_push`                 | _none_            | AWS: whether to enable image scanning on push                                                                                                        |
+| `http_proxy`                       | _none_            | Set an http proxy if needed. It is also forwarded as build arg called "HTTP_PROXY".                                                                  |
+| `https_proxy`                      | _none_            | Set an https proxy if needed. It is also forwarded as build arg called "HTTPS_PROXY".                                                                |
+| `no_proxy`                         | _none_            | Set (sub-)domains to be ignored by proxy settings. It is also forwarded as build arg called "NO_PROXY".                                              |
 
 ## Multi registry push example
 
@@ -174,11 +177,6 @@ When performing a docker build behind a corporate proxy one needs to pass throug
 
 ```yaml
 variables:
-  # proxy config
-  - proxy_conf: &proxy_conf
-      - http_proxy: "http://X.Y.Z.Z:3128"
-      - https_proxy: "http://X.Y.Z.Z:3128"
-      - no_proxy: ".my-subdomain.com"
   # deployment targets
   - &publish_repos "codeberg.org/test"
   # logins for deployment targets
@@ -192,9 +190,6 @@ variables:
 steps:
   test:
     image: woodpeckerci/plugin-docker-buildx:2
-    environment:
-      # adding proxy in env for the plugin runtime itself.
-      - <<: *proxy_conf
     privileged: true
     settings:
       dry-run: true
@@ -209,14 +204,9 @@ steps:
       #   - 192.168.55.32
       # Adding an optional Docker Hub mirror for the nested dockerd.
       # mirror: https://my-mirror.example.com
-      build_args:
-        # passthrough proxy config to the build process and Dockerfile CMDs itself.
-        - <<: *proxy_conf
-      # add driver-opt http config to tell buildkit + buildx to resolve external checksums through a proxy.
-      buildkit_driveropt:
-        - "env.http_proxy=http://X.Y.Z.Z:3128"
-        - "env.https_proxy=http://X.Y.Z.Z:3128"
-        - "env.no_proxy=.my-subdomain.com"
+      http_proxy: "http://X.Y.Z.Z:3128"
+      https_proxy: "http://X.Y.Z.Z:3128"
+      no_proxy: ".my-subdomain.com"
 ```
 
 ## Using cache images

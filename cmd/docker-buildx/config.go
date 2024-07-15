@@ -355,5 +355,23 @@ func settingsFlags(settings *plugin.Settings) []cli.Flag {
 			Usage:       "defines provenance setting",
 			Destination: &settings.Build.Provenance,
 		},
+		&cli.StringFlag{
+			Name:        "http_proxy",
+			EnvVars:     []string{"PLUGIN_HTTP_PROXY", "HTTP_PROXY"},
+			Usage:       "sets the HTTP_PROXY env",
+			Destination: &settings.ProxyConf.Http,
+		},
+		&cli.StringFlag{
+			Name:        "https_proxy",
+			EnvVars:     []string{"PLUGIN_HTTPS_PROXY", "HTTPS_PROXY"},
+			Usage:       "sets the HTTPS_PROXY env",
+			Destination: &settings.ProxyConf.Https,
+		},
+		&cli.StringFlag{
+			Name:        "no_proxy",
+			EnvVars:     []string{"PLUGIN_NO_PROXY", "NO_PROXY"},
+			Usage:       "sets the NO_PROXY env",
+			Destination: &settings.ProxyConf.No,
+		},
 	}
 }

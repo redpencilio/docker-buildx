@@ -85,6 +85,12 @@ type Build struct {
 	Provenance      string          // Docker build provenance
 }
 
+type ProxyConf struct {
+	Http  string // HTTP_PROXY environment variable
+	Https string // HTTPS_PROXY environment variable
+	No    string // NO_PROXY environment variable
+}
+
 // Settings for the Plugin.
 type Settings struct {
 	// ECR
@@ -102,6 +108,7 @@ type Settings struct {
 	LoginsRaw       string
 	DefaultLogin    Login
 	Build           Build
+	ProxyConf       ProxyConf
 	Dryrun          bool
 	Cleanup         bool
 	CustomCertStore string // e.g. for "/etc/docker/certs.d/<registry>/ca.crt"
@@ -117,6 +124,10 @@ func (p *Plugin) InitSettings() error {
 		if err := json.Unmarshal([]byte(p.settings.LoginsRaw), &p.settings.Logins); err != nil {
 			return fmt.Errorf("could not unmarshal logins: %v", err)
 		}
+	}
+
+	if err := p.applyProxyConf(); err != nil {
+		return err
 	}
 
 	p.settings.Build.Branch = p.pipeline.Repo.Branch

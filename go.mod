@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	codeberg.org/6543/go-yaml2json v1.0.0
-	github.com/6543/go-version v1.3.1
+	github.com/6543/go-version v1.4.0
 	github.com/aws/aws-sdk-go v1.54.19
 	github.com/drone-plugins/drone-plugin-lib v0.4.2
 	github.com/go-git/go-git/v5 v5.12.0

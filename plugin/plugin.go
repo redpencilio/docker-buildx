@@ -1,7 +1,7 @@
 package plugin
 
 import (
-	"github.com/drone-plugins/drone-plugin-lib/drone"
+	"codeberg.org/woodpecker-plugins/drone-plugin-lib/drone"
 )
 
 // Plugin implements drone.Plugin to provide the plugin implementation.

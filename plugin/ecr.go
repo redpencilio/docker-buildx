@@ -35,7 +35,7 @@ func (p *Plugin) EcrInit() {
 
 				// filter repo containing ecr registry
 				substrings := make([]string, 0)
-				for _, repo := range p.settings.Build.Repo.Value() {
+				for _, repo := range p.settings.Build.Repo {
 					substrings = append(substrings, strings.Split(repo, ",")...)
 				}
 				filtered := make([]string, 0)
@@ -63,7 +63,7 @@ func (p *Plugin) EcrInit() {
 		ecr_login.Aws_access_key_id = p.settings.AwsAccessKeyId
 		ecr_login.Aws_secret_access_key = p.settings.AwsSecretAccessKey
 		aws_region = p.settings.AwsRegion
-		repo = p.settings.Build.Repo.Value()[0]
+		repo = p.settings.Build.Repo[0]
 
 		// set the region
 		if aws_region == "" {

@@ -31,24 +31,24 @@ func (p *Plugin) applyProxyConf() error {
 
 	// add driver-opt http config to tell buildkit + buildx to resolve external checksums through a proxy.
 	if p.settings.ProxyConf.Http != "" {
-		p.settings.Daemon.BuildkitDriverOpt.Set(fmt.Sprintf("env.http_proxy=%s", p.settings.ProxyConf.Http))
+		p.settings.Daemon.BuildkitDriverOpt = append(p.settings.Daemon.BuildkitDriverOpt, fmt.Sprintf("env.http_proxy=%s", p.settings.ProxyConf.Http))
 	}
 	if p.settings.ProxyConf.Https != "" {
-		p.settings.Daemon.BuildkitDriverOpt.Set(fmt.Sprintf("env.https_proxy=%s", p.settings.ProxyConf.Https))
+		p.settings.Daemon.BuildkitDriverOpt = append(p.settings.Daemon.BuildkitDriverOpt, fmt.Sprintf("env.https_proxy=%s", p.settings.ProxyConf.Https))
 	}
 	if p.settings.ProxyConf.No != "" {
-		p.settings.Daemon.BuildkitDriverOpt.Set(fmt.Sprintf("env.no_proxy=%s", p.settings.ProxyConf.No))
+		p.settings.Daemon.BuildkitDriverOpt = append(p.settings.Daemon.BuildkitDriverOpt, fmt.Sprintf("env.no_proxy=%s", p.settings.ProxyConf.No))
 	}
 
 	// passthrough proxy config to the build process and Dockerfile CMDs itself.
 	if p.settings.ProxyConf.Http != "" {
-		p.settings.Build.Args.Set(fmt.Sprintf("HTTP_PROXY=%s", p.settings.ProxyConf.Http))
+		p.settings.Build.Args = append(p.settings.Build.Args, fmt.Sprintf("HTTP_PROXY=%s", p.settings.ProxyConf.Http))
 	}
 	if p.settings.ProxyConf.Https != "" {
-		p.settings.Build.Args.Set(fmt.Sprintf("HTTPS_PROXY=%s", p.settings.ProxyConf.Https))
+		p.settings.Build.Args = append(p.settings.Build.Args, fmt.Sprintf("HTTPS_PROXY=%s", p.settings.ProxyConf.Https))
 	}
 	if p.settings.ProxyConf.No != "" {
-		p.settings.Build.Args.Set(fmt.Sprintf("NO_PROXY=%s", p.settings.ProxyConf.No))
+		p.settings.Build.Args = append(p.settings.Build.Args, fmt.Sprintf("NO_PROXY=%s", p.settings.ProxyConf.No))
 	}
 
 	return nil

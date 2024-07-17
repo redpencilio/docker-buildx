@@ -7,7 +7,6 @@ import (
 
 	"codeberg.org/6543/go-yaml2json"
 	"github.com/stretchr/testify/assert"
-	"github.com/urfave/cli/v2"
 )
 
 var defaultTestSettings = Settings{
@@ -16,7 +15,7 @@ var defaultTestSettings = Settings{
 	},
 	Build: Build{
 		Context:         ".",
-		Tags:            *cli.NewStringSlice("latest"),
+		Tags:            []string{"latest"},
 		TagsDefaultName: "latest",
 		LabelsAuto:      true,
 		Pull:            true,

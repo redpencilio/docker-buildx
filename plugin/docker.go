@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/urfave/cli/v2"
 )
 
 func commandLoginEmail(login Login) *exec.Cmd {
@@ -43,7 +42,7 @@ func commandBuilder(daemon Daemon) *exec.Cmd {
 		args = append(args, "--config", buildkitConfig)
 	}
 
-	for _, driveropt := range daemon.BuildkitDriverOpt.Value() {
+	for _, driveropt := range daemon.BuildkitDriverOpt {
 		args = append(args, "--driver-opt", driveropt)
 	}
 
@@ -100,20 +99,20 @@ func commandBuild(build Build, dryrun bool) *exec.Cmd {
 	if build.CacheTo != "" {
 		args = append(args, "--cache-to", build.CacheTo)
 	}
-	for _, arg := range build.CacheImages.Value() {
+	for _, arg := range build.CacheImages {
 		args = append(args, "--cache-from", arg)
 		args = append(args, string("--cache-to=type=registry,ref="+arg+",mode=max,image-manifest=true,oci-mediatypes=true"))
 	}
-	for _, arg := range build.ArgsEnv.Value() {
+	for _, arg := range build.ArgsEnv {
 		addProxyValue(&build, arg)
 	}
-	for _, arg := range append(defaultBuildArgs, build.Args.Value()...) {
+	for _, arg := range append(defaultBuildArgs, build.Args...) {
 		args = append(args, "--build-arg", arg)
 	}
-	for _, secret := range build.Secrets.Value() {
+	for _, secret := range build.Secrets {
 		args = append(args, "--secret", secret)
 	}
-	for _, host := range build.AddHost.Value() {
+	for _, host := range build.AddHost {
 		args = append(args, "--add-host", host)
 	}
 	if build.Target != "" {
@@ -133,17 +132,17 @@ func commandBuild(build Build, dryrun bool) *exec.Cmd {
 		args = append(args, "--provenance", build.Provenance)
 	}
 
-	if len(build.Platforms.Value()) > 0 {
-		args = append(args, "--platform", strings.Join(build.Platforms.Value()[:], ","))
+	if len(build.Platforms) > 0 {
+		args = append(args, "--platform", strings.Join(build.Platforms[:], ","))
 	}
 
-	for _, tag := range build.Tags.Value() {
-		for _, repo := range build.Repo.Value() {
+	for _, tag := range build.Tags {
+		for _, repo := range build.Repo {
 			args = append(args, "-t", fmt.Sprintf("%s:%s", repo, tag))
 		}
 	}
 
-	for _, l := range build.Labels.Value() {
+	for _, l := range build.Labels {
 		args = append(args, "--label", l)
 	}
 
@@ -153,8 +152,8 @@ func commandBuild(build Build, dryrun bool) *exec.Cmd {
 // helper function to create the docker push commands.
 func commandsPush(build Build) []*exec.Cmd {
 	cmd := make([]*exec.Cmd, 0, 1)
-	for _, tag := range build.Tags.Value() {
-		for _, repo := range build.Repo.Value() {
+	for _, tag := range build.Tags {
+		for _, repo := range build.Repo {
 			cmd = append(cmd, exec.Command("docker", "push", fmt.Sprintf("%s:%s", repo, tag)))
 		}
 	}
@@ -173,8 +172,8 @@ func addProxyValue(build *Build, key string) {
 	value := getProxyValue(key)
 
 	if len(value) > 0 && !hasProxyBuildArg(build, key) {
-		build.Args = *cli.NewStringSlice(append(build.Args.Value(), fmt.Sprintf("%s=%s", key, value))...)
-		build.Args = *cli.NewStringSlice(append(build.Args.Value(), fmt.Sprintf("%s=%s", strings.ToUpper(key), value))...)
+		build.Args = append(build.Args, fmt.Sprintf("%s=%s", key, value))
+		build.Args = append(build.Args, fmt.Sprintf("%s=%s", strings.ToUpper(key), value))
 	}
 }
 
@@ -195,7 +194,7 @@ func getProxyValue(key string) string {
 func hasProxyBuildArg(build *Build, key string) bool {
 	keyUpper := strings.ToUpper(key)
 
-	for _, s := range build.Args.Value() {
+	for _, s := range build.Args {
 		if strings.HasPrefix(s, key) || strings.HasPrefix(s, keyUpper) {
 			return true
 		}
@@ -226,10 +225,10 @@ func commandDaemon(daemon Daemon) *exec.Cmd {
 	if len(daemon.Bip) != 0 {
 		args = append(args, "--bip", daemon.Bip)
 	}
-	for _, dns := range daemon.DNS.Value() {
+	for _, dns := range daemon.DNS {
 		args = append(args, "--dns", dns)
 	}
-	for _, dnsSearch := range daemon.DNSSearch.Value() {
+	for _, dnsSearch := range daemon.DNSSearch {
 		args = append(args, "--dns-search", dnsSearch)
 	}
 	if len(daemon.MTU) != 0 {

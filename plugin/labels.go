@@ -10,7 +10,7 @@ import (
 
 // Labels returns list of labels to use for image
 func (p *Plugin) Labels() []string {
-	l := p.settings.Build.Labels.Value()
+	l := p.settings.Build.Labels
 	// As described in https://github.com/opencontainers/image-spec/blob/main/annotations.md
 	l = append(l, fmt.Sprintf("org.opencontainers.image.created=%s", time.Now().UTC().Format(time.RFC3339)))
 	if p.settings.Build.Remote != "" {

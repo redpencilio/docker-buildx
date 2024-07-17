@@ -1,12 +1,13 @@
 package plugin
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 func TestCommandBuilder(t *testing.T) {
@@ -42,14 +43,14 @@ func TestCommandBuilder(t *testing.T) {
 			os.Setenv("PLUGIN_BUILDKIT_DRIVEROPT", test.Input)
 
 			// create dummy cli app to reproduce the issue
-			app := &cli.App{
+			app := &cli.Command{
 				Name:    "dummy App",
 				Usage:   "testing inputs",
 				Version: "0.0.1",
 				Flags: []cli.Flag{
 					&cli.StringSliceFlag{
 						Name:        "daemon.buildkit-driveropt",
-						EnvVars:     []string{"PLUGIN_BUILDKIT_DRIVEROPT"},
+						Sources:     cli.EnvVars("PLUGIN_BUILDKIT_DRIVEROPT"),
 						Usage:       "adds optional driver-ops args like 'env.http_proxy'",
 						Destination: &test.Daemon.BuildkitDriverOpt,
 					},
@@ -58,12 +59,12 @@ func TestCommandBuilder(t *testing.T) {
 			}
 
 			// need to run the app to resolve the flags
-			_ = app.Run(nil)
+			_ = app.Run(context.Background(), nil)
 
 			// call the commandBuilder to prepare the cmd with its args
 			_ = commandBuilder(test.Daemon)
 
-			assert.Len(t, test.Daemon.BuildkitDriverOpt.Value(), test.WantedLen)
+			assert.Len(t, test.Daemon.BuildkitDriverOpt, test.WantedLen)
 		})
 	}
 }

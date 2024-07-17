@@ -1,14 +1,15 @@
 package main
 
 import (
+	"context"
 	"os"
 
 	"codeberg.org/woodpecker-plugins/plugin-docker-buildx/plugin"
 	"github.com/joho/godotenv"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
-	"github.com/drone-plugins/drone-plugin-lib/errors"
-	"github.com/drone-plugins/drone-plugin-lib/urfave"
+	"codeberg.org/woodpecker-plugins/drone-plugin-lib/errors"
+	"codeberg.org/woodpecker-plugins/drone-plugin-lib/urfave"
 )
 
 var version = "unknown"
@@ -26,7 +27,9 @@ func main() {
 		godotenv.Overload(envFile)
 	}
 
-	app := &cli.App{
+	ctx := context.Background()
+
+	app := &cli.Command{
 		Name:    "docker-buildx",
 		Usage:   "build docker container with DinD and buildx",
 		Version: version,
@@ -34,19 +37,19 @@ func main() {
 		Action:  run(settings),
 	}
 
-	if err := app.Run(os.Args); err != nil {
+	if err := app.Run(ctx, os.Args); err != nil {
 		errors.HandleExit(err)
 	}
 }
 
 func run(settings *plugin.Settings) cli.ActionFunc {
-	return func(ctx *cli.Context) error {
-		urfave.LoggingFromContext(ctx)
+	return func(ctx context.Context, c *cli.Command) error {
+		urfave.LoggingFromContext(c)
 
 		plugin := plugin.New(
 			*settings,
-			urfave.PipelineFromContext(ctx),
-			urfave.NetworkFromContext(ctx),
+			urfave.PipelineFromContext(c),
+			urfave.NetworkFromContext(c),
 		)
 
 		if err := plugin.Validate(); err != nil {

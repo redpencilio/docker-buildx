@@ -2,6 +2,8 @@ codeberg.org/6543/go-yaml2json v1.0.0 h1:heGqo9VEi7gY2yNqjj7X4ADs5nzlFIbGsJtgYDL
 codeberg.org/6543/go-yaml2json v1.0.0/go.mod h1:mz61q14LWF4ZABrgMEDMmk3t9dPi6zgR1uBh2VKV2RQ=
 codeberg.org/woodpecker-plugins/drone-plugin-lib v0.6.0 h1:y73r8LJ+f1fslSYuxCp+D55tRwXyNpcKU4jd8OH0ktU=
 codeberg.org/woodpecker-plugins/drone-plugin-lib v0.6.0/go.mod h1:Dss89lb/MeyGMkQwneihrVx08H/5yD4tlRId7Ra3RNw=
+codeberg.org/woodpecker-plugins/drone-plugin-lib v0.6.1 h1:Ikk5BPuo18AxE7HAncxiW1Nc+Wd4GTZySXGBrxK77qE=
+codeberg.org/woodpecker-plugins/drone-plugin-lib v0.6.1/go.mod h1:Dss89lb/MeyGMkQwneihrVx08H/5yD4tlRId7Ra3RNw=
 dario.cat/mergo v1.0.0 h1:AGCNq9Evsj31mOgNPcLyXc+4PNABt905YmuqPYYpBWk=
 dario.cat/mergo v1.0.0/go.mod h1:uNxQE+84aUszobStD9th8a29P2fMDhsBdgRYvZOxGmk=
 github.com/6543/go-version v1.4.0 h1:iNYLzyjZarPImMoauoqjFP+hkdny/Zp1ecg5pS+AGuU=

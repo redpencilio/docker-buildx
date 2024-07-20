@@ -12,7 +12,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
-	github.com/urfave/cli/v3 v3.0.0-alpha9.0.20240711030030-937cfe918cb1
+	github.com/urfave/cli/v3 v3.0.0-alpha9.0.20240717192922-127cf54fac9f
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
 	honnef.co/go/tools v0.4.7
 )
